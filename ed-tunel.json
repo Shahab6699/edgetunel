@@ -1,0 +1,654 @@
+{
+  "log": {
+    "level": "warn",
+    "output": "box.log",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "tag": "dns-remote",
+        "address": "https://9.9.9.9/dns-query",
+        "address_resolver": "dns-direct"
+      },
+      {
+        "tag": "dns-trick-direct",
+        "address": "https://sky.rethinkdns.com/",
+        "detour": "direct-fragment"
+      },
+      {
+        "tag": "dns-direct",
+        "address": "8.8.4.4",
+        "address_resolver": "dns-local",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns-local",
+        "address": "local",
+        "detour": "direct"
+      },
+      {
+        "tag": "dns-block",
+        "address": "rcode://success"
+      }
+    ],
+    "rules": [
+      {
+        "domain": "c.xf.free.hr",
+        "server": "dns-direct"
+      },
+      {
+        "domain": "connectivitycheck.gstatic.com",
+        "server": "dns-remote",
+        "rewrite_ttl": 3000
+      },
+      {
+        "domain_suffix": ".ir",
+        "server": "dns-direct"
+      },
+      {
+        "rule_set": [
+          "geoip-ir",
+          "geosite-ir"
+        ],
+        "server": "dns-direct"
+      }
+    ],
+    "final": "dns-remote",
+    "static_ips": {
+      "sky.rethinkdns.com": [
+        "104.17.148.22",
+        "104.17.147.22",
+        "104.21.83.62",
+        "172.67.214.246",
+        "2606:4700:3030::ac43:d6f6",
+        "2606:4700:3030::6815:533e"
+      ]
+    },
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "mtu": 9000,
+      "inet4_address": "172.19.0.1/28",
+      "auto_route": true,
+      "strict_route": true,
+      "endpoint_independent_nat": true,
+      "stack": "mixed",
+      "sniff": true,
+      "sniff_override_destination": true,
+      "domain_strategy": "ipv4_only"
+    },
+    {
+      "type": "mixed",
+      "tag": "mixed-in",
+      "listen": "127.0.0.1",
+      "listen_port": 12334,
+      "sniff": true,
+      "sniff_override_destination": true,
+      "domain_strategy": "ipv4_only"
+    },
+    {
+      "type": "direct",
+      "tag": "dns-in",
+      "listen": "127.0.0.1",
+      "listen_port": 16450
+    }
+  ],
+  "outbounds": [
+    {
+      "type": "selector",
+      "tag": "select",
+      "outbounds": [
+        "auto",
+        "节点使用教程/guide https://t.me/edtunnel/7462 § 0",
+        "Channel https://t.me/edtunnel anycast § 1",
+        "US-Los Angeles-LAX 1 § 2",
+        "US-Los Angeles-LAX 2 § 3",
+        "CA-Toronto-YYZ 3 § 4",
+        "AE-Paris-CDG 4 § 5",
+        "NL-Amsterdam-AMS 5 § 6",
+        "GB-London-LHR 6 § 7",
+        "NL-Amsterdam-AMS 7 § 8",
+        "GB-London-LHR 8 § 9",
+        "FR-Marseille-MRS 9 § 10",
+        "IN-Chennai-MAA 10 § 11",
+        "Los Angeles-LAX-AS906-DMIT § 12",
+        "Osaka-KIX-AS25820-IT7 Networks § 13",
+        "Singapore-SIN-AS997-KLAYER § 14",
+        "Hong Kong-HKG-AS45102-Alibaba § 15",
+        "San Jose-SJC-AS906-DMIT § 16"
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "urltest",
+      "tag": "auto",
+      "outbounds": [
+        "节点使用教程/guide https://t.me/edtunnel/7462 § 0",
+        "Channel https://t.me/edtunnel anycast § 1",
+        "US-Los Angeles-LAX 1 § 2",
+        "US-Los Angeles-LAX 2 § 3",
+        "CA-Toronto-YYZ 3 § 4",
+        "AE-Paris-CDG 4 § 5",
+        "NL-Amsterdam-AMS 5 § 6",
+        "GB-London-LHR 6 § 7",
+        "NL-Amsterdam-AMS 7 § 8",
+        "GB-London-LHR 8 § 9",
+        "FR-Marseille-MRS 9 § 10",
+        "IN-Chennai-MAA 10 § 11",
+        "Los Angeles-LAX-AS906-DMIT § 12",
+        "Osaka-KIX-AS25820-IT7 Networks § 13",
+        "Singapore-SIN-AS997-KLAYER § 14",
+        "Hong Kong-HKG-AS45102-Alibaba § 15",
+        "San Jose-SJC-AS906-DMIT § 16"
+      ],
+      "url": "http://connectivitycheck.gstatic.com/generate_204",
+      "interval": "10m0s",
+      "tolerance": 1,
+      "idle_timeout": "30m0s"
+    },
+    {
+      "type": "vless",
+      "tag": "节点使用教程/guide https://t.me/edtunnel/7462 § 0",
+      "server": "c.xf.free.hr",
+      "server_port": 2087,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "max_early_data": 2048,
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "Channel https://t.me/edtunnel anycast § 1",
+      "server": "c.xf.free.hr",
+      "server_port": 2087,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "max_early_data": 2048,
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "US-Los Angeles-LAX 1 § 2",
+      "server": "129.153.126.67",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "US-Los Angeles-LAX 2 § 3",
+      "server": "129.146.168.102",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "CA-Toronto-YYZ 3 § 4",
+      "server": "140.238.158.238",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "AE-Paris-CDG 4 § 5",
+      "server": "139.185.34.131",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "NL-Amsterdam-AMS 5 § 6",
+      "server": "158.101.209.76",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "GB-London-LHR 6 § 7",
+      "server": "130.162.184.173",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "NL-Amsterdam-AMS 7 § 8",
+      "server": "141.148.227.19",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "GB-London-LHR 8 § 9",
+      "server": "134.65.59.100",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "FR-Marseille-MRS 9 § 10",
+      "server": "144.24.200.164",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "IN-Chennai-MAA 10 § 11",
+      "server": "129.159.22.4",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "Los Angeles-LAX-AS906-DMIT § 12",
+      "server": "154.21.94.105",
+      "server_port": 8883,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "Osaka-KIX-AS25820-IT7 Networks § 13",
+      "server": "212.50.251.20",
+      "server_port": 37507,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "Singapore-SIN-AS997-KLAYER § 14",
+      "server": "103.213.247.116",
+      "server_port": 54548,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "Hong Kong-HKG-AS45102-Alibaba § 15",
+      "server": "47.242.172.10",
+      "server_port": 45936,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "vless",
+      "tag": "San Jose-SJC-AS906-DMIT § 16",
+      "server": "136.175.176.67",
+      "server_port": 443,
+      "uuid": "63673fba-f95d-438c-9f78-a2bf8c24ea2f",
+      "tls": {
+        "enabled": true,
+        "server_name": "god.shahababolhasanpour.workers.dev",
+        "utls": {
+          "enabled": true,
+          "fingerprint": "random"
+        }
+      },
+      "transport": {
+        "type": "ws",
+        "path": "/",
+        "headers": {
+          "Host": "god.shahababolhasanpour.workers.dev"
+        },
+        "early_data_header_name": "Sec-WebSocket-Protocol"
+      },
+      "packet_encoding": "xudp"
+    },
+    {
+      "type": "dns",
+      "tag": "dns-out"
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    },
+    {
+      "type": "direct",
+      "tag": "direct-fragment",
+      "tls_fragment": {
+        "enabled": true,
+        "size": "5-17",
+        "sleep": "1"
+      }
+    },
+    {
+      "type": "direct",
+      "tag": "bypass"
+    },
+    {
+      "type": "block",
+      "tag": "block"
+    }
+  ],
+  "route": {
+    "rules": [
+      {
+        "inbound": "dns-in",
+        "outbound": "dns-out"
+      },
+      {
+        "port": 53,
+        "outbound": "dns-out"
+      },
+      {
+        "process_name": [
+          "Hiddify",
+          "Hiddify.exe",
+          "HiddifyCli",
+          "HiddifyCli.exe"
+        ],
+        "outbound": "bypass"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "bypass"
+      },
+      {
+        "domain_suffix": ".ir",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": [
+          "geoip-ir",
+          "geosite-ir"
+        ],
+        "outbound": "direct"
+      }
+    ],
+    "rule_set": [
+      {
+        "type": "remote",
+        "tag": "geoip-ir",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/hiddify/hiddify-geo/rule-set/country/geoip-ir.srs",
+        "update_interval": "120h0m0s"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-ir",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/hiddify/hiddify-geo/rule-set/country/geosite-ir.srs",
+        "update_interval": "120h0m0s"
+      }
+    ],
+    "final": "select",
+    "auto_detect_interface": true,
+    "override_android_vpn": true
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "clash.db"
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:16756",
+      "secret": "uBTSx5MWMfJCY4aj"
+    }
+  }
+}
